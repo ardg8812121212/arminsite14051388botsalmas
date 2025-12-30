@@ -1,0 +1,63 @@
+
+@if (apiKeyError()) {
+  <div class="bg-red-900 border border-red-500 text-red-200 px-4 py-3 rounded-lg relative" role="alert">
+    <strong class="font-bold">خطای پیکربندی!</strong>
+    <span class="block sm:inline">{{ apiKeyError() }}</span>
+  </div>
+} @else {
+  <div class="max-w-2xl mx-auto">
+    <div class="bg-gray-800 rounded-lg shadow-2xl p-6">
+      <h2 class="text-2xl font-bold text-cyan-400 mb-4 text-center">خلق تصویر با هوش مصنوعی</h2>
+      <p class="text-gray-400 mb-6 text-center">توضیحات خود را برای تصویری که می‌خواهید بسازید وارد کنید.</p>
+      
+      <form (submit)="generateImage()" class="flex flex-col sm:flex-row items-center gap-4">
+        <input
+          type="text"
+          [(ngModel)]="prompt"
+          name="prompt"
+          placeholder="مثال: یک گربه فضانورد روی ماه"
+          class="flex-grow w-full bg-gray-700 text-gray-200 border border-gray-600 rounded-full py-3 px-5 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition"
+          [disabled]="isLoading()"
+        />
+        <button
+          type="submit"
+          class="w-full sm:w-auto bg-cyan-600 text-white rounded-full py-3 px-6 hover:bg-cyan-500 disabled:bg-gray-500 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center gap-2"
+          [disabled]="isLoading() || prompt().trim() === ''"
+        >
+          @if (isLoading()) {
+            <div class="w-5 h-5 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
+            <span>در حال ساخت...</span>
+          } @else {
+            <span class="material-symbols-outlined">auto_awesome</span>
+            <span>بساز</span>
+          }
+        </button>
+      </form>
+    </div>
+
+    <div class="mt-8">
+      @if (isLoading()) {
+        <div class="flex flex-col items-center justify-center bg-gray-800 rounded-lg p-8 aspect-square">
+          <div class="w-16 h-16 border-4 border-t-transparent border-cyan-400 rounded-full animate-spin"></div>
+          <p class="mt-4 text-gray-300">تصویر شما در حال آماده شدن است...</p>
+        </div>
+      } @else if (imageUrl()) {
+        <div class="bg-gray-800 rounded-lg p-2 shadow-lg">
+          <img [src]="imageUrl()" alt="Generated Image" class="rounded-md w-full h-full object-cover aspect-square" />
+        </div>
+      } @else if (error()) {
+         <div class="bg-red-900 border border-red-500 text-red-200 px-4 py-3 rounded-lg relative" role="alert">
+            <strong class="font-bold">خطا!</strong>
+            <span class="block sm:inline">{{ error() }}</span>
+         </div>
+      } @else {
+        <div class="flex items-center justify-center bg-gray-800 border-2 border-dashed border-gray-600 rounded-lg p-8 aspect-square">
+          <div class="text-center text-gray-500">
+            <span class="material-symbols-outlined text-6xl">image</span>
+            <p class="mt-2">تصویر ساخته شده در اینجا نمایش داده می‌شود.</p>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+}

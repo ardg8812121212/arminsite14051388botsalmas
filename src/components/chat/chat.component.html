@@ -1,0 +1,59 @@
+
+@if (apiKeyError()) {
+  <div class="bg-red-900 border border-red-500 text-red-200 px-4 py-3 rounded-lg relative" role="alert">
+    <strong class="font-bold">خطای پیکربندی!</strong>
+    <span class="block sm:inline">{{ apiKeyError() }}</span>
+  </div>
+} @else {
+  <div class="flex flex-col h-[calc(100vh-250px)] max-w-4xl mx-auto bg-gray-800 rounded-lg shadow-2xl">
+    <div #chatContainer class="flex-grow p-6 overflow-y-auto space-y-6">
+      @if (messages().length === 0) {
+        <div class="text-center text-gray-400">
+          <p class="text-xl">به Armin AI خوش آمدید!</p>
+          <p>چگونه می‌توانم امروز به شما کمک کنم؟</p>
+        </div>
+      }
+      @for (message of messages(); track $index) {
+        <div class="flex" [class.justify-end]="message.role === 'user'">
+          <div 
+            class="max-w-lg lg:max-w-xl px-5 py-3 rounded-2xl" 
+            [class.bg-cyan-600]="message.role === 'user'" 
+            [class.text-white]="message.role === 'user'"
+            [class.bg-gray-700]="message.role === 'model'"
+            [class.text-gray-200]="message.role === 'model'"
+          >
+            <p class="whitespace-pre-wrap">{{ message.text }}</p>
+          </div>
+        </div>
+      }
+      @if (isLoading()) {
+        <div class="flex justify-start">
+            <div class="bg-gray-700 px-5 py-3 rounded-2xl flex items-center space-x-3 space-x-reverse">
+                <div class="typing-dot"></div>
+                <div class="typing-dot" style="animation-delay: 0.2s;"></div>
+                <div class="typing-dot" style="animation-delay: 0.4s;"></div>
+            </div>
+        </div>
+      }
+    </div>
+    <div class="p-4 bg-gray-800 border-t border-gray-700">
+      <form (submit)="sendMessage()" class="flex items-center gap-4">
+        <input
+          type="text"
+          [(ngModel)]="currentMessage"
+          name="message"
+          placeholder="پیام خود را تایپ کنید..."
+          class="flex-grow bg-gray-700 text-gray-200 border border-gray-600 rounded-full py-3 px-5 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition"
+          [disabled]="isLoading()"
+        />
+        <button
+          type="submit"
+          class="bg-cyan-600 text-white rounded-full p-3 hover:bg-cyan-500 disabled:bg-gray-500 disabled:cursor-not-allowed transition-colors duration-200"
+          [disabled]="isLoading() || currentMessage().trim() === ''"
+        >
+          <span class="material-symbols-outlined">send</span>
+        </button>
+      </form>
+    </div>
+  </div>
+}
